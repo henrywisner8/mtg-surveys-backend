@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MTG Surveys</title>
+</head>
+<body>
+  <h1>MTG Survey Questions</h1>
+  <ul id="surveyList"></ul>
+
+  <h2>Create a New Survey</h2>
+  <form id="surveyForm">
+    <input type="text" id="question" placeholder="Your question" required>
+    <input type="text" id="options" placeholder="Comma-separated options (Yes,No)" required>
+    <button type="submit">Create Survey</button>
+  </form>
+
+  <script>
+    const apiURL = "https://mtg-surveys-backend-production.up.railway.app/api/surveys";
+
+
+    // Replace this with your actual live backend URL
+    const surveyList = document.getElementById("surveyList");
+    const form = document.getElementById("surveyForm");
+
+    // Fetch and display surveys
+    fetch(apiURL)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(survey => {
+          const li = document.createElement("li");
+          li.textContent = `${survey.question} (${survey.options.join(", ")})`;
+          surveyList.appendChild(li);
+        });
+      });
+
+    // Handle new survey submission
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = document.getElementById("question").value;
+      const options = document.getElementById("options").value.split(",").map(opt => opt.trim());
+
+      const res = await fetch(apiURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, options })
+      });
+
+      if (res.ok) {
+        alert("Survey created! Refresh the page to see it.");
+      } else {
+        alert("Error creating survey");
+      }
+    });
+  </script>
+</body>
+</html>
