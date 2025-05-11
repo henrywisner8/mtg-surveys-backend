@@ -1,18 +1,22 @@
 const express = require('express');
 const router = express.Router();
 
-// GET all surveys
+const surveys = []; // stores surveys while server is running
+
 router.get('/', (req, res) => {
-  res.json([
-    { id: 1, question: 'Is Sol Ring broken in Commander?', options: ['Yes', 'No'] },
-  ]);
+  res.json(surveys);
 });
 
-// POST a new survey
 router.post('/', (req, res) => {
   const { question, options } = req.body;
-  const newSurvey = { id: Date.now(), question, options };
+  const newSurvey = {
+    id: Date.now(),
+    question,
+    options,
+  };
+  surveys.push(newSurvey);
   res.status(201).json(newSurvey);
 });
 
 module.exports = router;
+
