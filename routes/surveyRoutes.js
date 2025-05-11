@@ -19,4 +19,5 @@ router.post('/', (req, res) => {
 });
 
 module.exports = router;
+console.log('Survey saved to DB:', result.rows[0]);
 
