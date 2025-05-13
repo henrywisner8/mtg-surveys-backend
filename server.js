@@ -4,12 +4,12 @@ require('dotenv').config();
 
 const app = express();
 
-// ✅ Allow only your Netlify frontend
 app.use(cors({
-  origin: 'https://transcendent-genie-422cbc.netlify.app',
+  origin: 'https://mtgconsensus.netlify.app', // ✅ new domain
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 app.use(express.json());
 
