@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../models/db'); // ✅ connect to Neon
 
-const surveys = []; // stores surveys while server is running
-
-router.get('/', (req, res) => {
-  res.json(surveys);
+// GET all surveys
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM surveys ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database fetch failed' });
+  }
 });
 
+// POST a new survey
 router.post('/', async (req, res) => {
   const { question, options } = req.body;
   if (!question || !options) {
@@ -19,11 +26,12 @@ router.post('/', async (req, res) => {
       [question, options]
     );
 
-    console.log('Survey saved to DB:', result.rows[0]); // ✅ This is safe now
-
+    console.log('Survey saved to DB:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database insert failed' });
   }
 });
+
+module.exports = router;
