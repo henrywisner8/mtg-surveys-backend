@@ -2,31 +2,26 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const surveyRoutes = require('./routes/surveyRoutes');
-
 const app = express();
 
-// ✅ Enable CORS for all origins (you can restrict this later)
+// ✅ Allow only your Netlify frontend
 app.use(cors({
-  origin: '*',
+  origin: 'https://transcendent-genie-422cbc.netlify.app',
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 
-// ✅ Use your survey routes
-app.use('/api/surveys', surveyRoutes);
-
+const surveyRoutes = require('./routes/surveyRoutes');
 const authRoutes = require('./routes/authRoutes');
+
+app.use('/api/surveys', surveyRoutes);
 app.use('/api/auth', authRoutes);
 
-
-// ✅ Health check route
 app.get('/', (req, res) => {
   res.send('MTG Surveys API is live!');
 });
 
-// ✅ Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
