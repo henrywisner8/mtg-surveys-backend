@@ -28,20 +28,18 @@ router.get('/', async (req, res) => {
 });
 
 // ✅ POST a new survey
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   const { question, options } = req.body;
+  const userId = req.user.id; // Get the user from the token
+
   if (!question || !options) {
     return res.status(400).json({ error: 'Missing question or options' });
   }
 
-  console.log("Decoded user:", req.user);
-console.log("Survey ID:", surveyId);
-console.log("Option:", option);
-
   try {
     const result = await pool.query(
-      'INSERT INTO surveys (question, options) VALUES ($1, $2) RETURNING *',
-      [question, options]
+      'INSERT INTO surveys (question, options, user_id) VALUES ($1, $2, $3) RETURNING *',
+      [question, options, userId]
     );
 
     console.log('Survey saved to DB:', result.rows[0]);
