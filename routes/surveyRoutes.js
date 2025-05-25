@@ -34,6 +34,10 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Missing question or options' });
   }
 
+  console.log("Decoded user:", req.user);
+console.log("Survey ID:", surveyId);
+console.log("Option:", option);
+
   try {
     const result = await pool.query(
       'INSERT INTO surveys (question, options) VALUES ($1, $2) RETURNING *',
