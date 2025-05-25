@@ -5,7 +5,7 @@ const pool = require('../models/db'); // ✅ connect to Neon
 // GET all surveys
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM surveys ORDER BY created_at DESC');
+    const result = await pool.query('SELECT id, question, options FROM surveys ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -31,6 +31,23 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database insert failed' });
+  }
+});
+// Vote on a survey option
+router.post('/:id/vote', async (req, res) => {
+  const surveyId = req.params.id;
+  const { option } = req.body;
+
+  try {
+    await pool.query(
+      'INSERT INTO votes (survey_id, option) VALUES ($1, $2)',
+      [surveyId, option]
+    );
+
+    res.status(201).json({ message: 'Vote recorded' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to record vote' });
   }
 });
 
