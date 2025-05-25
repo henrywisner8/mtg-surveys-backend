@@ -19,13 +19,31 @@ function authenticateToken(req, res, next) {
 // ✅ GET all surveys
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, question, options FROM surveys ORDER BY created_at DESC');
-    res.json(result.rows);
+    const surveysResult = await pool.query('SELECT id, question, options FROM surveys ORDER BY created_at DESC');
+    const surveys = surveysResult.rows;
+
+    const votesResult = await pool.query('SELECT survey_id, option, COUNT(*) AS count FROM votes GROUP BY survey_id, option');
+    const voteMap = {};
+    votesResult.rows.forEach(vote => {
+      if (!voteMap[vote.survey_id]) {
+        voteMap[vote.survey_id] = {};
+      }
+      voteMap[vote.survey_id][vote.option] = parseInt(vote.count);
+    });
+
+    const surveysWithVotes = surveys.map(survey => ({
+      ...survey,
+      voteCounts: voteMap[survey.id] || {}
+    }));
+
+    res.json(surveysWithVotes);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Database fetch failed' });
   }
 });
+
+
 
 // ✅ POST a new survey
 router.post('/', authenticateToken, async (req, res) => {
@@ -76,6 +94,22 @@ router.post('/:id/vote', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to record vote' });
+  }
+});
+// GET vote counts for a survey
+router.get('/:id/votes', async (req, res) => {
+  const surveyId = req.params.id;
+
+  try {
+    const result = await pool.query(
+      'SELECT option, COUNT(*) as count FROM votes WHERE survey_id = $1 GROUP BY option',
+      [surveyId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to get vote counts' });
   }
 });
 
