@@ -41,29 +41,42 @@
         data.forEach(survey => {
           const li = document.createElement("li");
           li.innerHTML = `<strong>${survey.question}</strong>`;
-survey.options.forEach(opt => {
-  const btn = document.createElement("button");
-  btn.textContent = opt;
-  btn.style.margin = "5px";
-  btn.style.padding = "10px";
-  btn.style.borderRadius = "20px";
-  btn.style.border = "1px solid #ccc";
-  btn.style.cursor = "pointer";
-  btn.addEventListener('click', async () => {
-    const res = await fetch(`${apiURL}/${survey.id}/vote`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ option: opt })
-    });
 
-    if (res.ok) {
-      alert(`Voted for "${opt}"`);
-    } else {
-      alert("Error submitting vote");
-    }
-  });
-  li.appendChild(btn);
-});
+          survey.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.textContent = opt;
+            btn.style.margin = "5px";
+            btn.style.padding = "10px";
+            btn.style.borderRadius = "20px";
+            btn.style.border = "1px solid #ccc";
+            btn.style.cursor = "pointer";
+
+            btn.addEventListener('click', async () => {
+              const token = localStorage.getItem('token');
+              if (!token) {
+                alert("You must be logged in to vote!");
+                return;
+              }
+
+              const res = await fetch(`${apiURL}/${survey.id}/vote`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ option: opt })
+              });
+
+              if (res.ok) {
+                alert(`Voted for "${opt}"`);
+              } else {
+                const data = await res.json();
+                alert(`Error submitting vote: ${data.error || 'Unknown error'}`);
+              }
+            });
+
+            li.appendChild(btn);
+          });
 
           surveyList.appendChild(li);
         });
@@ -75,13 +88,13 @@ survey.options.forEach(opt => {
       const question = document.getElementById("question").value;
       const options = document.getElementById("options").value.split(",").map(opt => opt.trim());
 
-      const token = localStorage.getItem('token'); // ✅ Get token from localStorage
+      const token = localStorage.getItem('token');
 
       const res = await fetch(apiURL, {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // ✅ Send token in request
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ question, options })
       });
@@ -95,7 +108,6 @@ survey.options.forEach(opt => {
 
     // Handle registration
     const registerForm = document.getElementById('registerForm');
-
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -119,7 +131,6 @@ survey.options.forEach(opt => {
 
     // Handle login
     const loginForm = document.getElementById('loginForm');
-
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
