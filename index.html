@@ -158,6 +158,63 @@ fetch(apiURL)
         alert(`Login failed: ${data.error}`);
       }
     });
+    
   </script>
+  <!-- 💬 Chat Bubble -->
+<button id="chatToggle" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; border-radius: 50%; background: #007bff; color: white; border: none; cursor: pointer;">
+  💬
+</button>
+
+<!-- 💬 Chat Window -->
+<div id="chatWindow" style="display: none; position: fixed; bottom: 80px; right: 20px; width: 300px; max-height: 400px; background: white; border: 1px solid #ccc; border-radius: 8px; padding: 10px; overflow-y: auto;">
+  <div id="chatMessages" style="height: 300px; overflow-y: auto; font-family: sans-serif; font-size: 14px;"></div>
+  <input id="chatInput" type="text" placeholder="Ask the bot something..." style="width: 100%; margin-top: 10px;">
+</div>
+<script>
+  const chatToggle = document.getElementById('chatToggle');
+  const chatWindow = document.getElementById('chatWindow');
+  const chatInput = document.getElementById('chatInput');
+  const chatMessages = document.getElementById('chatMessages');
+
+  chatToggle.addEventListener('click', () => {
+    chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
+  });
+
+  chatInput.addEventListener('keydown', async (e) => {
+    if (e.key === 'Enter') {
+      const userMsg = chatInput.value;
+      if (!userMsg) return;
+
+      const userDiv = document.createElement('div');
+      userDiv.textContent = "You: " + userMsg;
+      userDiv.style.marginBottom = "6px";
+      chatMessages.appendChild(userDiv);
+      chatInput.value = '';
+
+      try {
+        const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMsg })
+        });
+
+        const data = await res.json();
+        const botMsg = data.reply || "Hmm, something went wrong.";
+
+        const botDiv = document.createElement('div');
+        botDiv.textContent = "Bot: " + botMsg;
+        botDiv.style.marginBottom = "10px";
+        botDiv.style.color = "#007bff";
+        chatMessages.appendChild(botDiv);
+      } catch (error) {
+        const errDiv = document.createElement('div');
+        errDiv.textContent = "Bot: Error contacting the server.";
+        errDiv.style.marginBottom = "10px";
+        errDiv.style.color = "red";
+        chatMessages.appendChild(errDiv);
+      }
+    }
+  });
+</script>
 </body>
 </html>
