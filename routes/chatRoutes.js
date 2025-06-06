@@ -1,4 +1,3 @@
-// routes/chatRoutes.js
 const express = require('express');
 const router = express.Router();
 const { Configuration, OpenAIApi } = require("openai");
@@ -11,9 +10,7 @@ const openai = new OpenAIApi(configuration);
 router.post('/', async (req, res) => {
   const { message } = req.body;
 
-  if (!message) {
-    return res.status(400).json({ error: "No message provided" });
-  }
+  if (!message) return res.status(400).json({ error: "No message provided" });
 
   try {
     const completion = await openai.createChatCompletion({
@@ -29,3 +26,4 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
