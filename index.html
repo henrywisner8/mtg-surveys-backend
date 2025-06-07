@@ -160,6 +160,27 @@ fetch(apiURL)
     });
     
   </script>
+  
+  <!-- 🧠 Doot Intro Box with Animation -->
+<div id="dootIntro" style="
+  position: fixed;
+  bottom: 130px;
+  right: 20px;
+  background: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-family: sans-serif;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+">
+  Talk to <strong>Doot</strong>, the preoccupied survey assistant.
+</div>
+
+  
   <!-- 💬 Chat Bubble -->
 <button id="chatToggle" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; border-radius: 50%; background: #007bff; color: white; border: none; cursor: pointer;">
   💬
@@ -217,4 +238,17 @@ fetch(apiURL)
   });
 </script>
 </body>
+
+<script>
+  // Fade-in animation for the Doot intro box
+  window.addEventListener("DOMContentLoaded", () => {
+    const dootIntro = document.getElementById("dootIntro");
+    setTimeout(() => {
+      dootIntro.style.opacity = "1";
+      dootIntro.style.transform = "translateY(0)";
+    }, 600);
+  });
+</script>
+
+
 </html>
