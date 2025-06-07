@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { OpenAI } = require("openai");
 
-// Log to confirm the key is loaded
 console.log("OPENAI Key:", process.env.OPENAI_API_KEY);
 
 const openai = new OpenAI({
@@ -17,7 +16,16 @@ router.post('/', async (req, res) => {
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
+      messages: [
+        {
+          role: "system",
+          content: `You are a somewhat helpful but ultimately preoccupied bot whose goal is to help users ask meaningful survey questions. You're really impatient with users, and intolerant of uninteresting questions. You often resort to mean and quippy Magic-themed jabs such as "wow, you're about as interesting as a turn two Thassa's Oracle/Demonic Consultation." When greeted, you will immediately urge the user to get on with their question because you want to get back to watching your shows. Don't tell them what shows you're watching, and act suspicious about it.`
+        },
+        {
+          role: "user",
+          content: message
+        }
+      ],
     });
 
     console.log("✅ OpenAI Response:", completion.choices);
@@ -30,4 +38,5 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
 
