@@ -197,6 +197,8 @@ fetch(apiURL)
   const chatInput = document.getElementById('chatInput');
   const chatMessages = document.getElementById('chatMessages');
 
+  let threadId = null; // Store the assistant's thread ID
+
   chatToggle.addEventListener('click', () => {
     chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
   });
@@ -213,20 +215,19 @@ fetch(apiURL)
       chatInput.value = '';
 
       try {
+        // Send message to backend
         const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMsg })
+          body: JSON.stringify({ message: userMsg, thread_id: threadId })
         });
 
         const data = await res.json();
-        const botMsg = data.reply || "Hmm, something went wrong.";
+        threadId = data.thread_id; // Save thread ID for next turns
+        const runId = data.run_id;
 
-        const botDiv = document.createElement('div');
-        botDiv.textContent = "Bot: " + botMsg;
-        botDiv.style.marginBottom = "10px";
-        botDiv.style.color = "#007bff";
-        chatMessages.appendChild(botDiv);
+        // Poll for assistant's reply
+        pollForAssistantResponse(threadId, runId);
       } catch (error) {
         const errDiv = document.createElement('div');
         errDiv.textContent = "Bot: Error contacting the server.";
@@ -236,7 +237,51 @@ fetch(apiURL)
       }
     }
   });
+
+  async function pollForAssistantResponse(threadId, runId) {
+    const pollInterval = 1500; // 1.5 seconds
+    let attempts = 0;
+    const maxAttempts = 20;
+
+    while (attempts < maxAttempts) {
+      attempts++;
+
+      try {
+        const runRes = await fetch(`https://mtg-surveys-backend-production.up.railway.app/api/chat/status`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ thread_id: threadId, run_id: runId })
+        });
+
+        const statusData = await runRes.json();
+
+        if (statusData.status === 'completed') {
+          // Display the assistant's message(s)
+          statusData.messages.forEach(msg => {
+            const botDiv = document.createElement('div');
+            botDiv.textContent = `Bot: ${msg}`;
+            botDiv.style.marginBottom = "10px";
+            botDiv.style.color = "#007bff";
+            chatMessages.appendChild(botDiv);
+          });
+          return;
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, pollInterval));
+    }
+
+    // Timeout fallback
+    const timeoutDiv = document.createElement('div');
+    timeoutDiv.textContent = "Bot: Response timed out.";
+    timeoutDiv.style.marginBottom = "10px";
+    timeoutDiv.style.color = "red";
+    chatMessages.appendChild(timeoutDiv);
+  }
 </script>
+
 </body>
 
 <script>
