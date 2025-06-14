@@ -1,40 +1,53 @@
 const express = require('express');
 const router = express.Router();
 const { OpenAI } = require("openai");
-const pool = require('../models/db'); // Ensure you have a db.js exporting a configured pg Pool
-
-console.log("OPENAI Key:", process.env.OPENAI_API_KEY);
+const pool = require('../models/db'); // Assumes you have a configured pg Pool
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const ASSISTANT_ID = "asst_ABngKEpZA76jxY4tU9Lvz8un";
+
 router.post('/', async (req, res) => {
   const { message } = req.body;
 
-  if (!message) return res.status(400).json({ error: "No message provided" });
+  if (!message) {
+    return res.status(400).json({ error: "No message provided" });
+  }
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `Your name is Doot, and your primary goal is to be a helpful assistant, 
-          engaging with the user in whatever way helps best achieve their goal. However, you
-          should steer them toward asking a quality survey question after a few conversation turns. If 
-          they're struggling to come up with a survey question, ask them questions about frustrations
-          they have when they play, or player behaviors they enjoy seeing in games. These are just examples,
-          and you should come up with your own suggestion angles based on the conversation so far. 
-          Use casual language with frequent colloqualisms, conducting sentiment analysis to ensure that 
-          you're matching the tone of the user. Use Magic: the Gathering themed slang words, occasionally 
-          making jokes that only Magic players would understand.`,
-        },
-        { role: "user", content: message }
-      ],
+    // Create a new thread
+    const thread = await openai.beta.threads.create();
+
+    // Add the user message to the thread
+    await openai.beta.threads.messages.create(thread.id, {
+      role: "user",
+      content: message,
     });
 
-    const botReply = completion.choices[0].message.content;
+    // Run the assistant on the thread
+    const run = await openai.beta.threads.runs.create(thread.id, {
+      assistant_id: ASSISTANT_ID,
+    });
+
+    // Poll the run status until it's complete
+    let runStatus;
+    do {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+    } while (runStatus.status !== "completed" && runStatus.status !== "failed");
+
+    if (runStatus.status === "failed") {
+      throw new Error("Assistant run failed");
+    }
+
+    // Get the messages in the thread
+    const messages = await openai.beta.threads.messages.list(thread.id);
+    const botReply = messages.data
+      .filter(m => m.role === "assistant")
+      .map(m => m.content?.[0]?.text?.value || "")
+      .join("\n");
 
     // Save to DB
     await pool.query(
@@ -50,5 +63,6 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
 
 
