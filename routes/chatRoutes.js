@@ -26,15 +26,16 @@ router.post('/', async (req, res) => {
     let thread_id = existingThreadId;
 
     if (!thread_id) {
-      console.log("⚡ Creating new thread...");
-      const thread = await openai.beta.threads.create();
-      console.log("📌 Thread creation response:", thread);
-      if (!thread || !thread.id || !thread.id.startsWith('thread')) {
-        console.error("❌ Invalid thread created:", thread);
-        return res.status(500).json({ error: "Failed to create a valid thread ID" });
-      }
-      thread_id = thread.id;
-    }
+  console.log("⚡ Creating new thread...");
+  const thread = await openai.beta.threads.create();
+  console.log("📌 Thread creation response:", thread);
+  if (!thread || !thread.id || !thread.id.startsWith('thread')) {
+    console.error("❌ Invalid thread created:", thread);
+    return res.status(500).json({ error: "Failed to create a valid thread ID" });
+  }
+  thread_id = thread.id;
+}
+
 
     console.log("💬 Adding message to thread", thread_id);
     await openai.beta.threads.messages.create(thread_id, {
