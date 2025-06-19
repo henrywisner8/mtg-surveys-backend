@@ -23,12 +23,18 @@ router.post('/', async (req, res) => {
 
     if (!thread_id) {
       console.log("⚡ Creating new thread...");
-      const thread = await openai.beta.threads.create();
-      if (!thread || !thread.id) {
-        throw new Error("Failed to create thread");
+      try {
+        const thread = await openai.beta.threads.create();
+        if (!thread || !thread.id || !thread.id.startsWith('thread')) {
+          console.error("❌ Invalid thread created:", thread);
+          return res.status(500).json({ error: "Failed to create a valid thread ID" });
+        }
+        console.log("✅ New thread created:", thread.id);
+        thread_id = thread.id;
+      } catch (err) {
+        console.error("❌ Thread creation error:", err.response?.data || err.message || err);
+        return res.status(500).json({ error: "Thread creation failed" });
       }
-      console.log("✅ New thread created:", thread.id);
-      thread_id = thread.id;
     }
 
     console.log("💬 Using thread_id for API calls:", thread_id);
@@ -82,3 +88,5 @@ router.post('/status', async (req, res) => {
 });
 
 module.exports = router;
+
+
