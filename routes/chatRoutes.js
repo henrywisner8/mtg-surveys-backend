@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
       console.log("Creating thread...");
       let thread;
       try {
-        thread = await openai.threads.create();
+        thread = await openai.beta.threads.create();
         console.log("Thread create response:", thread);
       } catch (err) {
         console.error("❌ Error creating thread:", err.response?.data || err.message || err);
@@ -38,14 +38,14 @@ router.post('/', async (req, res) => {
     }
 
     console.log(`Creating message in thread ${thread_id}...`);
-    const messageRes = await openai.threads.messages.create(thread_id, {
+    const messageRes = await openai.beta.threads.messages.create(thread_id, {
       role: "user",
       content: message
     });
     console.log("Message created:", messageRes);
 
     console.log(`Starting run for thread ${thread_id}...`);
-    const run = await openai.threads.runs.create(thread_id, {
+    const run = await openai.beta.threads.runs.create(thread_id, {
       assistant_id: ASSISTANT_ID
     });
     console.log("Run started:", run);
@@ -75,7 +75,7 @@ router.post('/status', async (req, res) => {
 
   try {
     console.log(`Checking status for run ${run_id} in thread ${thread_id}...`);
-    const run = await openai.threads.runs.retrieve(thread_id, run_id);
+    const run = await openai.beta.threads.runs.retrieve(thread_id, run_id);
     console.log("Run status retrieved:", run.status);
 
     if (run.status !== 'completed') {
@@ -83,7 +83,7 @@ router.post('/status', async (req, res) => {
     }
 
     console.log(`Fetching messages for thread ${thread_id}...`);
-    const messagesRes = await openai.threads.messages.list(thread_id);
+    const messagesRes = await openai.beta.threads.messages.list(thread_id);
     const messages = messagesRes.data
       .filter(m => m.role === 'assistant')
       .map(m => m.content[0].text.value);
@@ -99,3 +99,4 @@ router.post('/status', async (req, res) => {
 });
 
 module.exports = router;
+
