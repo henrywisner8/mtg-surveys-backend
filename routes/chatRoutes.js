@@ -68,9 +68,8 @@ router.post('/', async (req, res) => {
 router.post('/status', async (req, res) => {
   console.log("✅ /status raw request body:", req.body);
 
-  // Use unique variable names that won't get overridden
-  const clientThreadId = req.body.thread_id;
-  const clientRunId = req.body.run_id;
+  const clientThreadId = req.body.thread_id || req.body.threadId;
+  const clientRunId = req.body.run_id || req.body.runId;
 
   if (!clientThreadId || !clientRunId) {
     console.warn("⚠ Missing thread_id or run_id", { clientThreadId, clientRunId });
@@ -80,7 +79,6 @@ router.post('/status', async (req, res) => {
   console.log("🟣 About to call OpenAI with:", { clientThreadId, clientRunId });
 
   try {
-    // Safely pass clientThreadId + clientRunId to OpenAI API
     const run = await openai.beta.threads.runs.retrieve(clientThreadId, clientRunId);
     console.log("✅ OpenAI run retrieved:", run);
 
@@ -106,6 +104,7 @@ router.post('/status', async (req, res) => {
     });
   }
 });
+
 
 
 module.exports = router;
