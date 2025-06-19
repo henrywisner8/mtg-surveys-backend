@@ -315,8 +315,9 @@
     appendMessage("You", userMsg, "#f0c75e");
     chatInput.value = '';
 
+    // Build payload dynamically
     const bodyPayload = { message: userMsg };
-    if (threadId && threadId !== 'undefined') {
+    if (threadId && threadId.startsWith('thread')) {
       bodyPayload.thread_id = threadId;
     }
 
