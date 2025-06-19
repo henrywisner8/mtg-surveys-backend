@@ -317,9 +317,10 @@
 
     // Build payload dynamically
     const bodyPayload = { message: userMsg };
-    if (threadId && threadId.startsWith('thread')) {
-      bodyPayload.thread_id = threadId;
-    }
+   if (threadId && typeof threadId === 'string' && threadId.startsWith('thread')) {
+  bodyPayload.thread_id = threadId;
+}
+
 
     try {
       const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/chat", {
