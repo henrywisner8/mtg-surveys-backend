@@ -14,7 +14,7 @@ app.use(cors({
 // ✅ Middleware
 app.use(express.json());
 
-// ✅ Global error handlers (optional, good practice)
+// ✅ Global error handlers
 process.on('uncaughtException', (err) => {
   console.error('❌ Uncaught Exception:', err);
   process.exit(1);
@@ -34,18 +34,23 @@ app.use('/api/surveys', surveyRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 
-// ✅ Healthcheck route (for Railway healthcheck path `/`)
+// ✅ Healthcheck route with debug log
 app.get('/', (req, res) => {
+  console.log('✅ Healthcheck hit at', new Date());
   res.send('MTG Surveys API is live!');
 });
 
-// ✅ Start server — bind to Railway-injected PORT or fallback for local dev
+// ✅ Start server — bind to all interfaces for Railway + local dev support
 const PORT = process.env.PORT || 8080;
 
 console.log(`Environment PORT: ${process.env.PORT}`);
 console.log(`Binding to PORT: ${PORT}`);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
+// ✅ Periodic heartbeat log (optional, can remove later)
+setInterval(() => {
+  console.log('💓 Server alive at', new Date());
+}, 30000);
