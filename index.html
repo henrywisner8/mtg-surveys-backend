@@ -315,11 +315,16 @@
     appendMessage("You", userMsg, "#f0c75e");
     chatInput.value = '';
 
+    const bodyPayload = { message: userMsg };
+    if (threadId && threadId !== 'undefined') {
+      bodyPayload.thread_id = threadId;
+    }
+
     try {
       const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg, thread_id: threadId })
+        body: JSON.stringify(bodyPayload)
       });
 
       const data = await res.json();
@@ -339,6 +344,7 @@
     }
   }
 });
+
 
 
   function appendMessage(sender, text, color) {
