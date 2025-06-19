@@ -68,25 +68,25 @@ router.post('/', async (req, res) => {
 router.post('/status', async (req, res) => {
   console.log("✅ /status raw request body:", req.body);
 
-  let thread_id = req.body.thread_id;
-  let run_id = req.body.run_id;
+  const clientThreadId = req.body.thread_id;
+  const clientRunId = req.body.run_id;
 
-  if (!thread_id || !run_id) {
-    console.warn("⚠ Missing thread_id or run_id", { thread_id, run_id });
+  if (!clientThreadId || !clientRunId) {
+    console.warn("⚠ Missing thread_id or run_id", { clientThreadId, clientRunId });
     return res.status(400).json({ error: "Missing thread_id or run_id" });
   }
 
-  console.log("🟣 About to call OpenAI with:", { thread_id, run_id });
+  console.log("🟣 About to call OpenAI with:", { clientThreadId, clientRunId });
 
   try {
-    const run = await openai.beta.threads.runs.retrieve(thread_id, run_id);
+    const run = await openai.beta.threads.runs.retrieve(clientThreadId, clientRunId);
     console.log("✅ OpenAI run retrieved:", run);
 
     if (run.status !== 'completed') {
       return res.json({ status: run.status });
     }
 
-    const messagesRes = await openai.beta.threads.messages.list(thread_id);
+    const messagesRes = await openai.beta.threads.messages.list(clientThreadId);
     console.log("✅ OpenAI messages list:", messagesRes);
 
     const messages = messagesRes.data
@@ -106,5 +106,3 @@ router.post('/status', async (req, res) => {
 });
 
 module.exports = router;
-
-
