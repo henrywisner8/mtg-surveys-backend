@@ -19,23 +19,17 @@ router.post('/', async (req, res) => {
     let thread_id = existingThreadId;
     console.log("Incoming thread_id:", thread_id);
 
-    // If thread_id is missing, null, empty, or explicitly "undefined"
     if (!thread_id || thread_id === 'undefined') {
       console.log("Creating new thread...");
-      try {
-        const thread = await openai.beta.threads.create();
-        console.log("Thread create response:", thread);
+      const thread = await openai.beta.threads.create();
+      console.log("OpenAI thread response:", thread);
 
-        if (!thread || !thread.id || !thread.id.startsWith('thread')) {
-          console.error("❌ Invalid thread response:", thread);
-          return res.status(500).json({ error: "Failed to create a valid thread" });
-        }
-
-        thread_id = thread.id;
-      } catch (err) {
-        console.error("❌ Error creating thread:", err.response?.data || err.message || err);
-        return res.status(500).json({ error: "OpenAI thread creation failed" });
+      if (!thread?.id || !thread.id.startsWith('thread')) {
+        console.error("❌ Invalid thread response from OpenAI", thread);
+        return res.status(500).json({ error: "Failed to create a valid thread" });
       }
+
+      thread_id = thread.id;
     }
 
     console.log(`Creating message in thread ${thread_id}...`);
@@ -51,6 +45,12 @@ router.post('/', async (req, res) => {
     });
     console.log("Run started:", run);
 
+    if (!run?.id) {
+      console.error("❌ Invalid run response from OpenAI", run);
+      return res.status(500).json({ error: "Failed to start a valid run" });
+    }
+
+    console.log("✅ Returning to client:", { thread_id, run_id: run.id, status: run.status });
     res.json({
       status: run.status,
       thread_id,
@@ -66,37 +66,43 @@ router.post('/', async (req, res) => {
 });
 
 
+
 router.post('/status', async (req, res) => {
   const { thread_id, run_id } = req.body;
+  console.log("✅ /status request body:", req.body);
 
   if (!thread_id || !run_id) {
+    console.warn("⚠ Missing thread_id or run_id");
     return res.status(400).json({ error: "Missing thread_id or run_id" });
   }
 
   try {
-    console.log(`Checking status for run ${run_id} in thread ${thread_id}...`);
     const run = await openai.beta.threads.runs.retrieve(thread_id, run_id);
-    console.log("Run status retrieved:", run.status);
+    console.log("✅ OpenAI run retrieved:", run);
 
     if (run.status !== 'completed') {
       return res.json({ status: run.status });
     }
 
-    console.log(`Fetching messages for thread ${thread_id}...`);
     const messagesRes = await openai.beta.threads.messages.list(thread_id);
+    console.log("✅ OpenAI messages list:", messagesRes);
+
     const messages = messagesRes.data
       .filter(m => m.role === 'assistant')
       .map(m => m.content[0].text.value);
 
+    console.log("✅ Parsed assistant messages:", messages);
+
     res.json({ status: 'completed', messages });
 
   } catch (err) {
-    console.error("❌ Status check error:", err.response?.data || err.message || err);
+    console.error("❌ OpenAI API status error:", err.response?.data || err.message || err);
     res.status(500).json({
       error: err.response?.data || err.message || "Unexpected server error"
     });
   }
 });
+
 
 module.exports = router;
 
