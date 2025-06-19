@@ -19,7 +19,9 @@ router.post('/', async (req, res) => {
     let thread_id = existingThreadId;
 
     if (!thread_id) {
+      console.log("Creating thread...");
       const thread = await openai.threads.create();
+      console.log("Thread created:", thread);
       if (!thread?.id || !thread.id.startsWith('thread')) {
         console.error("Invalid thread created:", thread);
         return res.status(500).json({ error: "Failed to create valid thread" });
@@ -27,14 +29,18 @@ router.post('/', async (req, res) => {
       thread_id = thread.id;
     }
 
-    await openai.threads.messages.create(thread_id, {
+    console.log(`Creating message in thread ${thread_id}...`);
+    const messageRes = await openai.threads.messages.create(thread_id, {
       role: "user",
       content: message
     });
+    console.log("Message created:", messageRes);
 
+    console.log(`Starting run for thread ${thread_id}...`);
     const run = await openai.threads.runs.create(thread_id, {
       assistant_id: ASSISTANT_ID
     });
+    console.log("Run started:", run);
 
     res.json({
       status: run.status,
@@ -43,7 +49,7 @@ router.post('/', async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Chat error:", err.response?.data || err.message || err);
+    console.error("❌ Chat error:", err.response?.data || err.message || err);
     res.status(500).json({
       error: err.response?.data || err.message || "Unexpected server error"
     });
@@ -58,12 +64,15 @@ router.post('/status', async (req, res) => {
   }
 
   try {
+    console.log(`Checking status for run ${run_id} in thread ${thread_id}...`);
     const run = await openai.threads.runs.retrieve(thread_id, run_id);
+    console.log("Run status retrieved:", run.status);
 
     if (run.status !== 'completed') {
       return res.json({ status: run.status });
     }
 
+    console.log(`Fetching messages for thread ${thread_id}...`);
     const messagesRes = await openai.threads.messages.list(thread_id);
     const messages = messagesRes.data
       .filter(m => m.role === 'assistant')
@@ -72,7 +81,7 @@ router.post('/status', async (req, res) => {
     res.json({ status: 'completed', messages });
 
   } catch (err) {
-    console.error("Status check error:", err.response?.data || err.message || err);
+    console.error("❌ Status check error:", err.response?.data || err.message || err);
     res.status(500).json({
       error: err.response?.data || err.message || "Unexpected server error"
     });
@@ -80,4 +89,3 @@ router.post('/status', async (req, res) => {
 });
 
 module.exports = router;
-
