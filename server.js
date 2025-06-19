@@ -39,13 +39,13 @@ app.get('/', (req, res) => {
   res.send('MTG Surveys API is live!');
 });
 
-// ✅ Start server — only bind to Railway-injected PORT
-const PORT = process.env.PORT;
-if (!PORT) {
-  console.error('❌ No PORT provided by Railway!');
-  process.exit(1);
-}
+// ✅ Start server — bind to Railway-injected PORT or fallback for local dev
+const PORT = process.env.PORT || 8080;
+
+console.log(`Environment PORT: ${process.env.PORT}`);
+console.log(`Binding to PORT: ${PORT}`);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
