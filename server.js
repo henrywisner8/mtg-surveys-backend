@@ -22,9 +22,6 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-console.log(`🚀 process.env.PORT is: ${process.env.PORT}`);
-console.log(`🚀 Binding server on port ${PORT}`);
-
 
 app.use(express.json());
 
@@ -43,6 +40,8 @@ app.get('/', (req, res) => {
 
 // ✅ Start server
 const PORT = process.env.PORT || 5000;
+console.log(`🚀 process.env.PORT is: ${process.env.PORT}`);
+console.log(`🚀 Binding server on port ${PORT}`);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
