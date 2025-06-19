@@ -17,24 +17,25 @@ router.post('/', async (req, res) => {
 
   try {
     let thread_id = existingThreadId;
+    console.log("Incoming thread_id:", thread_id);
 
-    if (!thread_id) {
-      console.log("Creating thread...");
-      let thread;
+    // If thread_id is missing, null, empty, or explicitly "undefined"
+    if (!thread_id || thread_id === 'undefined') {
+      console.log("Creating new thread...");
       try {
-        thread = await openai.beta.threads.create();
+        const thread = await openai.beta.threads.create();
         console.log("Thread create response:", thread);
+
+        if (!thread || !thread.id || !thread.id.startsWith('thread')) {
+          console.error("❌ Invalid thread response:", thread);
+          return res.status(500).json({ error: "Failed to create a valid thread" });
+        }
+
+        thread_id = thread.id;
       } catch (err) {
         console.error("❌ Error creating thread:", err.response?.data || err.message || err);
         return res.status(500).json({ error: "OpenAI thread creation failed" });
       }
-
-      if (!thread || !thread.id || !thread.id.startsWith('thread')) {
-        console.error("❌ Invalid thread response:", thread);
-        return res.status(500).json({ error: "Failed to create a valid thread" });
-      }
-
-      thread_id = thread.id;
     }
 
     console.log(`Creating message in thread ${thread_id}...`);
@@ -64,7 +65,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-  
 
 router.post('/status', async (req, res) => {
   const { thread_id, run_id } = req.body;
