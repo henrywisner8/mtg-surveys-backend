@@ -17,40 +17,35 @@ app.use(express.json());
 // ✅ Global error handlers
 process.on('uncaughtException', (err) => {
   console.error('❌ Uncaught Exception:', err);
-  process.exit(1);
+  // Don't exit immediately on Railway — just log (adjust if needed)
 });
 
 process.on('unhandledRejection', (reason) => {
   console.error('❌ Unhandled Rejection:', reason);
-  process.exit(1);
+  // Don't exit immediately on Railway — just log (adjust if needed)
 });
 
 // ✅ Routes
-const surveyRoutes = require('./routes/surveyRoutes');
-const authRoutes = require('./routes/authRoutes');
-const chatRoutes = require('./routes/chatRoutes');
+app.use('/api/surveys', require('./routes/surveyRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
 
-app.use('/api/surveys', surveyRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
-
-// ✅ Healthcheck route with debug log
+// ✅ Healthcheck route
 app.get('/', (req, res) => {
-  console.log('✅ Healthcheck hit at', new Date());
+  console.log(`✅ Healthcheck ping at ${new Date().toISOString()}`);
   res.send('MTG Surveys API is live!');
 });
 
-// ✅ Start server — bind to all interfaces for Railway + local dev support
+// ✅ Start server
 const PORT = process.env.PORT || 8080;
-
-console.log(`Environment PORT: ${process.env.PORT}`);
-console.log(`Binding to PORT: ${PORT}`);
-
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
 
-// ✅ Periodic heartbeat log (optional, can remove later)
-setInterval(() => {
-  console.log('💓 Server alive at', new Date());
-}, 30000);
+// ✅ Optional: heartbeat log — only in dev
+if (process.env.NODE_ENV !== 'production') {
+  setInterval(() => {
+    console.log(`💓 Server alive at ${new Date().toISOString()}`);
+  }, 30000);
+}
+
