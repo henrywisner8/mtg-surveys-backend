@@ -301,7 +301,7 @@
   const chatWindow = document.getElementById('chatWindow');
   const chatInput = document.getElementById('chatInput');
   const chatMessages = document.getElementById('chatMessages');
-  let threadId = localStorage.getItem('chatThreadId');
+  let threadId = localStorage.getItem('chatThreadId') || null;
 
   chatToggle.addEventListener('click', () => {
     chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
@@ -323,6 +323,13 @@
       });
 
       const data = await res.json();
+
+      if (!res.ok || !data.thread_id || !data.run_id) {
+        const errMsg = data.error || "Invalid response from server.";
+        appendMessage("Bot", errMsg, "red");
+        return;
+      }
+
       threadId = data.thread_id;
       localStorage.setItem('chatThreadId', threadId);
 
@@ -357,6 +364,10 @@
         body: JSON.stringify({ thread_id: threadId, run_id: runId })
       });
       const statusData = await runRes.json();
+
+      if (!runRes.ok || !statusData.status) {
+        throw new Error(statusData.error || 'Invalid status response');
+      }
 
       if (statusData.status === 'completed') {
         statusData.messages.forEach(msg => appendMessage("Bot", msg, "#c9a227"));
