@@ -22,6 +22,10 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
+console.log(`🚀 process.env.PORT is: ${process.env.PORT}`);
+console.log(`🚀 Binding server on port ${PORT}`);
+
+
 app.use(express.json());
 
 // ✅ Routes
