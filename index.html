@@ -5,123 +5,19 @@
   <title>MTG Surveys</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: #121212;
-      color: #e0e0e0;
-      font-family: 'Cinzel', serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    #mainWrapper {
-      background: #1e1e1e;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
-    }
-
-    h1, h2 {
-      color: #f0c75e;
-      text-align: center;
-    }
-
-    input, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 4px;
-      border: 1px solid #333;
-      background: #2a2a2a;
-      color: #e0e0e0;
-      font-family: 'Cinzel', serif;
-    }
-
-    button {
-      background: #c9a227;
-      color: #121212;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #dcb94d;
-    }
-
-    #surveyList {
-      list-style: none;
-      padding: 0;
-      text-align: center;
-    }
-
-    #surveyList li {
-      margin-bottom: 15px;
-    }
-
-    #surveyList button {
-      width: auto;
-    }
-
-    #dootIntro {
-      position: fixed;
-      bottom: 130px;
-      right: 20px;
-      background: #c9a227;
-      color: #121212;
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-size: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-      font-family: 'Cinzel', serif;
-    }
-
-    #chatToggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      border-radius: 50%;
-      background: #c9a227;
-      color: #121212;
-      border: none;
-      cursor: pointer;
-      font-family: 'Cinzel', serif;
-    }
-
-    #chatWindow {
-      display: none;
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 300px;
-      max-height: 400px;
-      background: #1e1e1e;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
-    #chatMessages {
-      height: 300px;
-      overflow-y: auto;
-      font-size: 14px;
-      color: #e0e0e0;
-    }
-
-    #chatInput {
-      width: 100%;
-      margin-top: 10px;
-      background: #2a2a2a;
-      color: #e0e0e0;
-      border: 1px solid #333;
-      font-family: 'Cinzel', serif;
-    }
+    body { background: #121212; color: #e0e0e0; font-family: 'Cinzel', serif; margin: 0; padding: 20px; }
+    #mainWrapper { background: #1e1e1e; padding: 20px; max-width: 600px; margin: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.8); }
+    h1, h2 { color: #f0c75e; text-align: center; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 4px; border: 1px solid #333; background: #2a2a2a; color: #e0e0e0; font-family: 'Cinzel', serif; }
+    button { background: #c9a227; color: #121212; border: none; cursor: pointer; }
+    button:hover { background: #dcb94d; }
+    #surveyList { list-style: none; padding: 0; text-align: center; }
+    #surveyList li { margin-bottom: 15px; }
+    #dootIntro { position: fixed; bottom: 130px; right: 20px; background: #c9a227; color: #121212; padding: 10px 15px; border-radius: 10px; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.6); opacity: 0; transform: translateY(10px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; font-family: 'Cinzel', serif; }
+    #chatToggle { position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; border-radius: 50%; background: #c9a227; color: #121212; border: none; cursor: pointer; font-family: 'Cinzel', serif; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    #chatWindow { display: none; position: fixed; bottom: 80px; right: 20px; width: 300px; max-height: 400px; background: #1e1e1e; border: 1px solid #444; border-radius: 8px; padding: 10px; overflow-y: auto; }
+    #chatMessages { height: 300px; overflow-y: auto; font-size: 14px; color: #e0e0e0; }
+    #chatInput { width: 100%; margin-top: 10px; background: #2a2a2a; color: #e0e0e0; border: 1px solid #333; font-family: 'Cinzel', serif; }
   </style>
 </head>
 <body>
@@ -152,238 +48,226 @@
   </form>
 </div>
 
-<div id="dootIntro">
-  Talk to <strong>Doot</strong>, the preoccupied survey assistant.
-</div>
-
-<button id="chatToggle" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 15px;
-  border-radius: 50%;
-  background: #c9a227;
-  color: #121212;
-  border: none;
-  cursor: pointer;
-  font-family: 'Cinzel', serif;
-  width: 50px;  /* control button size */
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-">
-  💬
-</button>
-
-
+<div id="dootIntro">Talk to <strong>Doot</strong>, the preoccupied survey assistant.</div>
+<button id="chatToggle">💬</button>
 <div id="chatWindow">
   <div id="chatMessages"></div>
   <input id="chatInput" type="text" placeholder="Ask the bot something...">
 </div>
 
 <script>
-  const apiURL = "https://mtg-surveys-backend-production.up.railway.app/api/surveys";
-  const chatAPI = "https://mtg-surveys-backend-production.up.railway.app/api/chat";
-  const surveyList = document.getElementById("surveyList");
-  const form = document.getElementById("surveyForm");
+const apiURL = "https://mtg-surveys-backend-production.up.railway.app/api/surveys";
+const chatAPI = "https://mtg-surveys-backend-production.up.railway.app/api/chat";
+const surveyList = document.getElementById("surveyList");
+const form = document.getElementById("surveyForm");
 
-  fetch(apiURL)
-    .then(res => res.json())
-    .then(data => {
-      surveyList.innerHTML = "";
-      data.forEach(survey => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${survey.question}</strong><br/>`;
-        survey.options.forEach(opt => {
-          const count = survey.voteCounts?.[opt] || 0;
-          const btn = document.createElement("button");
-          btn.textContent = `${opt} (${count})`;
-          btn.style.margin = "5px";
-          btn.addEventListener('click', async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-              alert("You must be logged in to vote!");
-              return;
-            }
-            const res = await fetch(`${apiURL}/${survey.id}/vote`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-              },
-              body: JSON.stringify({ option: opt })
-            });
-            if (res.ok) {
-              alert(`Voted for "${opt}"!`);
-              location.reload();
-            } else {
-              const error = await res.json();
-              alert(`Vote failed: ${error.error}`);
-            }
+fetch(apiURL)
+  .then(res => res.json())
+  .then(data => {
+    surveyList.innerHTML = "";
+    data.forEach(survey => {
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${survey.question}</strong><br/>`;
+      survey.options.forEach(opt => {
+        const count = survey.voteCounts?.[opt] || 0;
+        const btn = document.createElement("button");
+        btn.textContent = `${opt} (${count})`;
+        btn.style.margin = "5px";
+        btn.addEventListener('click', async () => {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            alert("You must be logged in to vote!");
+            return;
+          }
+          const res = await fetch(`${apiURL}/${survey.id}/vote`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ option: opt })
           });
-          li.appendChild(btn);
+          if (res.ok) {
+            alert(`Voted for \"${opt}\"!`);
+            location.reload();
+          } else {
+            const error = await res.json();
+            alert(`Vote failed: ${error.error}`);
+          }
         });
-        surveyList.appendChild(li);
+        li.appendChild(btn);
       });
+      surveyList.appendChild(li);
     });
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const question = document.getElementById("question").value;
-    const options = document.getElementById("options").value.split(",").map(opt => opt.trim());
-    const token = localStorage.getItem('token');
-    const res = await fetch(apiURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ question, options })
-    });
-    if (res.ok) {
-      alert("Survey created! Refresh the page to see it.");
-    } else {
-      alert("Error creating survey (are you logged in?)");
-    }
   });
 
-  document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('regUsername').value;
-    const password = document.getElementById('regPassword').value;
-    const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert(`User registered: ${data.user.username}`);
-    } else {
-      alert(`Registration failed: ${data.error}`);
-    }
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const question = document.getElementById("question").value;
+  const options = document.getElementById("options").value.split(",").map(opt => opt.trim());
+  const token = localStorage.getItem('token');
+  const res = await fetch(apiURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ question, options })
   });
-
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
-    const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      alert(`Logged in as ${data.user.username}`);
-    } else {
-      alert(`Login failed: ${data.error}`);
-    }
-  });
-
-  const chatToggle = document.getElementById('chatToggle');
-  const chatWindow = document.getElementById('chatWindow');
-  const chatInput = document.getElementById('chatInput');
-  const chatMessages = document.getElementById('chatMessages');
-  let threadId = null;
-
-  try {
-    const storedThreadId = localStorage.getItem('chatThreadId');
-    if (storedThreadId && storedThreadId.startsWith('thread')) {
-      threadId = storedThreadId;
-    } else {
-      localStorage.removeItem('chatThreadId');
-    }
-  } catch {
-    threadId = null;
+  if (res.ok) {
+    alert("Survey created! Refresh the page to see it.");
+  } else {
+    alert("Error creating survey (are you logged in?)");
   }
+});
 
-  chatToggle.addEventListener('click', () => {
-    chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('regUsername').value;
+  const password = document.getElementById('regPassword').value;
+  const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
   });
+  const data = await res.json();
+  if (res.ok) {
+    alert(`User registered: ${data.user.username}`);
+  } else {
+    alert(`Registration failed: ${data.error}`);
+  }
+});
 
-  chatInput.addEventListener('keydown', async (e) => {
-    if (e.key === 'Enter') {
-      const userMsg = chatInput.value.trim();
-      if (!userMsg) return;
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('loginUsername').value;
+  const password = document.getElementById('loginPassword').value;
+  const res = await fetch("https://mtg-surveys-backend-production.up.railway.app/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem('token', data.token);
+    alert(`Logged in as ${data.user.username}`);
+  } else {
+    alert(`Login failed: ${data.error}`);
+  }
+});
 
-      appendMessage("You", userMsg, "#f0c75e");
-      chatInput.value = '';
+// Chat logic with debug
+const chatToggle = document.getElementById('chatToggle');
+const chatWindow = document.getElementById('chatWindow');
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
+let threadId = null;
 
-      const bodyPayload = { message: userMsg };
-      if (threadId && threadId.startsWith('thread')) {
-        bodyPayload.thread_id = threadId;
+try {
+  const storedThreadId = localStorage.getItem('chatThreadId');
+  if (storedThreadId && storedThreadId.startsWith('thread')) {
+    threadId = storedThreadId;
+  } else {
+    localStorage.removeItem('chatThreadId');
+  }
+} catch {
+  threadId = null;
+}
+
+chatToggle.addEventListener('click', () => {
+  chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
+});
+
+chatInput.addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter') {
+    const userMsg = chatInput.value.trim();
+    if (!userMsg) return;
+
+    appendMessage("You", userMsg, "#f0c75e");
+    chatInput.value = '';
+
+    const bodyPayload = { message: userMsg };
+    if (threadId && threadId.startsWith('thread')) {
+      bodyPayload.thread_id = threadId;
+    }
+
+    try {
+      const res = await fetch(chatAPI, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload)
+      });
+      const data = await res.json();
+      console.log("🟣 /api/chat response:", data);
+
+      if (!res.ok || !data.thread_id || !data.run_id) {
+        console.error("❌ Invalid /api/chat response", data);
+        appendMessage("Bot", data.error || "Invalid response from server (missing thread_id/run_id).", "red");
+        return;
       }
 
-      try {
-        const res = await fetch(chatAPI, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(bodyPayload)
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.thread_id || !data.run_id) {
-          appendMessage("Bot", data.error || "Invalid response from server.", "red");
-          return;
-        }
-
-        threadId = data.thread_id;
-        localStorage.setItem('chatThreadId', threadId);
-
-        pollForAssistantResponse(threadId, data.run_id);
-      } catch (error) {
-        appendMessage("Bot", "Error contacting the server.", "red");
-      }
+      threadId = data.thread_id;
+      localStorage.setItem('chatThreadId', threadId);
+      pollForAssistantResponse(threadId, data.run_id);
+    } catch (error) {
+      console.error("❌ Error contacting /api/chat:", error);
+      appendMessage("Bot", "Error contacting the server.", "red");
     }
-  });
+  }
+});
 
-  function appendMessage(sender, text, color) {
-    const div = document.createElement('div');
-    div.textContent = `${sender}: ${text}`;
-    div.style.marginBottom = "6px";
-    div.style.color = color;
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+function appendMessage(sender, text, color) {
+  const div = document.createElement('div');
+  div.textContent = `${sender}: ${text}`;
+  div.style.marginBottom = "6px";
+  div.style.color = color;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+async function pollForAssistantResponse(threadId, runId) {
+  if (!threadId || !runId || threadId === 'undefined' || runId === 'undefined') {
+    console.error("❌ Polling aborted — invalid IDs", { threadId, runId });
+    appendMessage("Bot", "Invalid thread or run ID — cannot poll.", "red");
+    return;
   }
 
-  async function pollForAssistantResponse(threadId, runId) {
-    const pollInterval = 1500;
-    let attempts = 0;
-    const maxAttempts = 20;
-    while (attempts < maxAttempts) {
-      attempts++;
-      try {
-        const runRes = await fetch(`${chatAPI}/status`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ thread_id: threadId, run_id: runId })
-        });
-        const statusData = await runRes.json();
-        if (statusData.status === 'completed') {
-          statusData.messages.forEach(msg => appendMessage("Bot", msg, "#c9a227"));
-          return;
-        }
-      } catch {
-        // Silent fail; could add logging
-      }
-      await new Promise(resolve => setTimeout(resolve, pollInterval));
-    }
-    appendMessage("Bot", "Response timed out.", "red");
-  }
+  const pollInterval = 1500;
+  let attempts = 0;
+  const maxAttempts = 20;
+  while (attempts < maxAttempts) {
+    attempts++;
+    console.log(`🟡 Polling attempt ${attempts}:`, { threadId, runId });
+    try {
+      const runRes = await fetch(`${chatAPI}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ thread_id: threadId, run_id: runId })
+      });
+      const statusData = await runRes.json();
+      console.log("🟢 /status response:", statusData);
 
-  window.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-      const dootIntro = document.getElementById("dootIntro");
-      dootIntro.style.opacity = "1";
-      dootIntro.style.transform = "translateY(0)";
-    }, 600);
-  });
+      if (statusData.status === 'completed') {
+        statusData.messages.forEach(msg => appendMessage("Bot", msg, "#c9a227"));
+        return;
+      }
+    } catch (err) {
+      console.error("❌ Polling error:", err);
+    }
+    await new Promise(resolve => setTimeout(resolve, pollInterval));
+  }
+  appendMessage("Bot", "Response timed out.", "red");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    const dootIntro = document.getElementById("dootIntro");
+    dootIntro.style.opacity = "1";
+    dootIntro.style.transform = "translateY(0)";
+  }, 600);
+});
 </script>
-
 
 </body>
 </html>
+
