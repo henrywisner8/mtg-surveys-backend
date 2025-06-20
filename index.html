@@ -163,16 +163,7 @@ const chatInput = document.getElementById('chatInput');
 const chatMessages = document.getElementById('chatMessages');
 let threadId = null;
 
-try {
-  const storedThreadId = localStorage.getItem('chatThreadId');
-  if (storedThreadId && storedThreadId.startsWith('thread')) {
-    threadId = storedThreadId;
-  } else {
-    localStorage.removeItem('chatThreadId');
-  }
-} catch {
-  threadId = null;
-}
+
 
 chatToggle.addEventListener('click', () => {
   chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
@@ -207,7 +198,7 @@ chatInput.addEventListener('keydown', async (e) => {
       }
 
       threadId = data.thread_id;
-      localStorage.setItem('chatThreadId', threadId);
+      
       pollForAssistantResponse(threadId, data.run_id);
     } catch (error) {
       console.error("❌ Error contacting /api/chat:", error);
